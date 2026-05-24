@@ -1,0 +1,48 @@
+const { pool } = require('../config/connectdb')
+
+const createTask = async (req, res) => {
+    try {
+        const { taskdate, taskstatus, notes, maintenancestatus, room_id, staff_id } = req.body
+        if (!taskdate || taskstatus === undefined || !notes || maintenancestatus === undefined || !room_id || !staff_id) {
+            return res.status(400).json({ status: "failed", message: "All fields are required" })
+        }
+        const roomid = await pool.query('select h.room_id, r.id from housekeepingtask h inner join room r on h.room_id = r.id WHERE h.id = $1', [room_id])
+        if (!roomid.rows.length === 0) {
+            return res.status(400).json({ status: "failed", message: "room id does not exist" })
+        }
+        const staffid = await pool.query('select h.staff_id, s.id from housekeepingtask h inner join staff s on h.staff_id = s.id WHERE s.id = $1', [staff_id])
+
+        if (!staffid.rows.length === 0) {
+            return res.status(400).json({ status: "failed", message: "staff id does not exist" })
+        }
+        const result = await pool.query('INSERT INTO housekeepingtask (taskdate, taskstatus, notes, maintenancestatus, room_id, staff_id) VALUES ($1, $2, $3, $4, $5, $6)',  [taskdate, taskstatus, notes, maintenancestatus, room_id, staff_id]);
+        if (!result) {
+            return res.status(400).json({ status: "failed", message: "data not fetched" })
+        }
+        res.status(200).json({ status: "success", message: "created task sucessfully" })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ status: "failed", message: "create task failed" })
+    }
+}
+
+const getTaskById = async (req, res) => {
+    try {
+        const { id } = req.params
+
+        const result = await pool.query('select * from housekeepingtask where id = ($1)', [id])
+
+        if (!result) {
+            return res.status(400).json({ status: "failed", message: "data not fetched" })
+        }
+        res.status(200).json({ status: "success", data: result.rows })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ status: "failed", message: "get task failed" })
+    }
+}
+
+module.exports = {
+    createTask,
+    getTaskById
+}
