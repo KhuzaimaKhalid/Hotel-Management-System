@@ -44,18 +44,24 @@ const MOCK_INVOICES = [
 
 export default function Invoicepage() {
   // Directly initialize state using our frontend mock database collection
-  const [bookings, setBookings] = useState(MOCK_INVOICES);
+
   const guestEmail = localStorage.getItem("guestpanel") || "guest@example.com";
 
   // Filter bookings locally by the signed-in user's email if available
+  const [bookings, setBookings] = useState([]);
+  const token = localStorage.getItem('token');
+  const userID = token ? JSON.parse(atob(token.split('.')[1])).userID : null;
+
   useEffect(() => {
-    if (guestEmail) {
-      const userBookings = MOCK_INVOICES.filter(
-        (b) => b.guestEmail.toLowerCase() === guestEmail.toLowerCase()
-      );
-      setBookings(userBookings);
+    if (userID) {
+      fetch(`https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/invoice/getInvoiceByUser/${userID}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.status === 'success') setBookings(data.data);
+        })
+        .catch(err => console.log(err));
     }
-  }, [guestEmail]);
+  }, [userID]);
 
   const downloadPDF = (id) => {
     const invoiceElement = document.getElementById(`invoice-${id}`);
@@ -101,8 +107,8 @@ export default function Invoicepage() {
       <div className="invoice-page" style={{ padding: "20px" }}>
         {bookings.map((booking) => (
           <div
-            key={booking._id}
-            id={`invoice-${booking._id}`}
+            key={booking.id}
+            id={`invoice-${booking.id}`}
             className="invoice-container invoice-card"
             style={{
               maxWidth: "800px",
@@ -116,27 +122,26 @@ export default function Invoicepage() {
             {/* Header */}
             <div className="invoice-header" style={{ textAlign: "center", marginBottom: "20px" }}>
               <h1>Hotel Invoice</h1>
-              <p>Invoice #{booking._id.slice(-6)}</p>
+              <p>Invoice #{booking.id}</p>
             </div>
 
             {/* Guest Details */}
             <div className="section" style={{ marginBottom: "20px" }}>
               <h2>Guest Details</h2>
-              <p><strong>Name:</strong> {booking.guestName}</p>
-              <p><strong>Email:</strong> {booking.guestEmail}</p>
+              <p><strong>Name:</strong> {booking.firstname} {booking.lastname}</p>
+              <p><strong>Email:</strong> {booking.email}</p>
             </div>
 
             {/* Booking Details */}
             <div className="section" style={{ marginBottom: "20px" }}>
               <h2>Booking Details</h2>
-              <p><strong>Room Number:</strong> {booking.room?.roomNumber || "N/A"}</p>
-              <p><strong>Room Type:</strong> {booking.room?.roomType || "N/A"}</p>
-              <p><strong>Check-in:</strong> {new Date(booking.checkIn).toLocaleDateString()}</p>
-              <p><strong>Check-out:</strong> {new Date(booking.checkOut).toLocaleDateString()}</p>
+              <p><strong>Room Number:</strong> {booking.roomnumber || "N/A"}</p>
+              <p><strong>Room Type:</strong> {booking.typename || "N/A"}</p>
+              <p><strong>Check-in:</strong> {new Date(booking.checkindate).toLocaleDateString()}</p>
 
               <img
-                src={booking.room?.image ? `/Images/${booking.room.image}` : "/Images/default.png"}
-                alt={booking.room?.roomType || "Room"}
+                src="/Images/default.png"
+                alt="Room"
                 style={{ width: "200px", borderRadius: "10px", margin: "10px 0" }}
               />
 
@@ -149,10 +154,10 @@ export default function Invoicepage() {
             <div className="section payment" style={{ marginBottom: "20px" }}>
               <h2>Payment</h2>
               <p>
-                <strong>Price per Night:</strong> PKR {booking.dynamicPrice || booking.room?.price || 0}
+                <strong>Price per Night:</strong> PKR {booking.baseprice || 0}
               </p>
               <p>
-                <strong>Total Amount:</strong> PKR {(booking.dynamicPrice || booking.room?.price || 0) * booking.roomCount}
+                <strong>Total Amount:</strong> PKR {booking.roomcharges + booking.servicecharges + booking.taxamount}
               </p>
             </div>
 
@@ -175,7 +180,7 @@ export default function Invoicepage() {
                   background: "black",
                   color: "white",
                 }}
-                onClick={() => downloadPDF(booking._id)}
+                onClick={() => downloadPDF(booking.id)}
               >
                 Download PDF
               </button>

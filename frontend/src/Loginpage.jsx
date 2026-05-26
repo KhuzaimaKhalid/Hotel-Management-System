@@ -4,31 +4,27 @@ import "./CSS/style.css"
 import { useNavigate } from 'react-router-dom';
 
 export default function Loginpage() {
-  const [email,setemail]=useState("");
-  const [password,setpassword]=useState("");
-  const navigate=useNavigate();
+  const [email, setemail] = useState("");
+  const [password, setpassword] = useState("");
+  const navigate = useNavigate();
 
-  const handlelogin=(e)=>{
+  const handlelogin = async (e) => {
     e.preventDefault();
-    const cleanemail=(email||"").toLowerCase().trim();
-     if(!cleanemail || !password){
-      alert("Please fill all the fields");
-      return;
-     }
-     if(cleanemail.startsWith("admin")){
-      localStorage.setItem("adminEmail",email);
-      localStorage.setItem("role","admin");
-      navigate("/booking");
-     }else if(cleanemail.startsWith("receptionist")){
-      localStorage.setItem("receptionistemail",email);
-      localStorage.setItem("role","receptionist");
-      navigate("/booking");
-     }
-     else if(cleanemail.startsWith("guest")){
-      localStorage.setItem("guestpanel",email);
-      localStorage.setItem("role","guest");
-      navigate("/booking"); 
-     }
+    const cleanemail = (email || "").toLowerCase().trim();
+    const response = await fetch('https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/loginGuest', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    const data = await response.json();
+    if (data.status === 'success') {
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('guestpanel', email);
+      localStorage.setItem('role', 'guest');
+      navigate('/');
+    } else {
+      alert(data.message);
+    }
   }
   return (
     <>
@@ -37,20 +33,20 @@ export default function Loginpage() {
           <h1>Welcome to Stayease</h1>
           <form onSubmit={handlelogin}>
             <label htmlFor="email">Email</label>
-            <input 
-              type="text" 
-              id="email" 
-              name="email" 
-              placeholder="Enter your email" onChange={(e)=>setemail(e.target.value)}
+            <input
+              type="text"
+              id="email"
+              name="email"
+              placeholder="Enter your email" onChange={(e) => setemail(e.target.value)}
             />
 
             <label htmlFor="password">Password</label>
-            <input 
-              type="password" 
-              id="password" 
-              name="password" 
-              placeholder="Enter your password" 
-              onChange={(e)=>setpassword(e.target.value)}
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              onChange={(e) => setpassword(e.target.value)}
             />
 
             <div className="links">

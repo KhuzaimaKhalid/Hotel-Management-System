@@ -40,7 +40,7 @@ export default function Signup() {
 
     // Branching logic based on selected role
     if (formData.role === 'guest') {
-      url = 'http://localhost:4000/api/user/guestSignup';
+      url = 'https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/guestSignup';
       payload = {
         firstname: formData.firstname,
         lastname: formData.lastname,
@@ -51,7 +51,7 @@ export default function Signup() {
         confirm_password: formData.confirm_password
       };
     } else if (formData.role === 'staff') {
-      url = 'http://localhost:4000/api/user/staffSignup';
+      url = 'https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/staffSignup';
       payload = {
         firstname: formData.firstname,
         lastname: formData.lastname,

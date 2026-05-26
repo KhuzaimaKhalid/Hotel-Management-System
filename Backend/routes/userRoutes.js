@@ -1,6 +1,6 @@
 const express = require('express')
 
-const { guestSignup, staffSignup, loginGuest, loginStaff, loginAdmin} = require('../controllers/userController')
+const { guestSignup, staffSignup, loginGuest, loginStaff, loginAdmin, getGuestId} = require('../controllers/userController')
 const router = express.Router()
 
 router.post('/guestSignup', guestSignup)
@@ -9,6 +9,7 @@ router.post('/guestSignup', guestSignup)
 .post('/loginStaff', loginStaff)
 .post('/staffSignup', staffSignup)
 .post('/loginAdmin', loginAdmin)
+.get('/getGuestId/:user_id',getGuestId)
 
 
 module.exports = router

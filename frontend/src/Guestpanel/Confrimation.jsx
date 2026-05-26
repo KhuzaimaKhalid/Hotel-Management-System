@@ -1,11 +1,58 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
+
 
 export default function Confirmation() {
   const { state } = useLocation(); // booking data from Billing.js
   const navigate = useNavigate();
+  const token = localStorage.getItem('token');
+const userID = token ? JSON.parse(atob(token.split('.')[1])).userID : null;
 
+
+  useEffect(() => {
+  if (state && userID) {
+    fetch(`https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/getGuestId/${userID}`)
+    .then(res => res.json())
+    .then(guestData => {
+      const guestId = guestData.guest_id;
+      fetch('https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/reservation/createReservation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          reservationdate: new Date().toISOString().split('T')[0],
+          numberofguest: (state.adults || 1) + (state.children || 0),
+          reservationstatus: true,
+          guest_id: guestId,
+          room_id: state.roomId || 1,
+          staff_id: 1
+        })
+      })
+      .then(res => res.json())
+      .then(resData => {
+        if (resData.status === 'success') {
+          fetch('https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/invoice/createInvoice', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              invoicedate: new Date().toISOString().split('T')[0],
+              roomcharges: state.dynamicPrice,
+              servicecharges: 0,
+              taxamount: 0,
+              paymentstatus: true,
+              reservation_id: resData.reservation_id
+            })
+          })
+          .then(res => res.json())
+          .then(data => console.log('Invoice created:', data))
+          .catch(err => console.log(err));
+        }
+      })
+    })
+    .catch(err => console.log(err));
+  }
+}, []);
   if (!state) {
     return (
       <>

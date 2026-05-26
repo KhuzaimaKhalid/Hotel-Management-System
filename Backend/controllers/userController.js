@@ -177,10 +177,24 @@ const loginAdmin = async (req, res) => {
     }
 }
 
+const getGuestId = async (req, res) => {
+  try {
+    const { user_id } = req.params
+    const result = await pool.query('SELECT id FROM guest WHERE user_id = $1', [user_id])
+    if (result.rows.length === 0) {
+      return res.status(404).json({ status: "failed", message: "guest not found" })
+    }
+    res.status(200).json({ status: "success", guest_id: result.rows[0].id })
+  } catch (error) {
+    res.status(500).json({ status: "failed", message: "failed to get guest id" })
+  }
+}
+
 module.exports = {
     guestSignup,
     staffSignup,
     loginGuest,
     loginStaff,
-    loginAdmin
+    loginAdmin,
+    getGuestId
 }

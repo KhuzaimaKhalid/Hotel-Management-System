@@ -37,17 +37,19 @@ export default function Booking() {
   const [roomCount, setRoomCount] = useState(1);
   const [adults, setAdults] = useState(2);
   const [children, setChildren] = useState(0);
-  
+
   // Initialize states directly with our local mock data arrays
   const [roomsData, setRoomsData] = useState(MOCK_ROOMS);
   const [filteredRooms, setFilteredRooms] = useState([]);
-  
+
   // Simulating locally saved guest profile details instead of database fetch
   const guestemail = localStorage.getItem("guestpanel") || "guest@example.com";
   const role = localStorage.getItem("role") || "user";
   const adminEmail = localStorage.getItem("adminEmail");
   const receptionistemail = localStorage.getItem("receptionistemail");
-  const [user, setUser] = useState({ _id: "u101", name: "Local Guest User" });
+  const token = localStorage.getItem('token');
+  const guestName = token ? localStorage.getItem('guestpanel') : "Guest";
+  const [user, setUser] = useState({ _id: "u101", name: guestName });
 
 
   const roomPopupRef = useRef(null);
@@ -71,7 +73,7 @@ export default function Booking() {
       alert("Room deleted successfully (UI state cleaned)");
     }
   };
-  
+
   // Close popup on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -112,7 +114,7 @@ export default function Booking() {
       ...room,
       dynamicPrice: calculatePrice(room.price),
     }));
-    
+
     setFilteredRooms(processedRooms);
   };
 
