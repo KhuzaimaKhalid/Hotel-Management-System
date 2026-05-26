@@ -10,7 +10,6 @@ import Booking from "./Guestpanel/Booking"
 import Admindashboard from "./adminpanel/Admindashboard"
 import Adminbillingpage from "./adminpanel/Adminbillingpage"
 import Adminbookrooms from "./adminpanel/Adminbookrooms"
-import AdminFeedback from "./adminpanel/Adminfeedback"
 import Adminuser from "./adminpanel/Adminuser"
 import Adminuserdetail from "./adminpanel/Adminuserdetail"
 import Adminviewroom from "./adminpanel/Adminviewroom"
@@ -37,9 +36,8 @@ function App() {
       <Route path="/adminaddroom" element={<Adminaddroom/>}/>
       <Route path="/adminbilling" element={<Adminbillingpage/>}/>
       <Route path="/bookrooms" element={<Adminbookrooms/>}/>
-      <Route path="/adminfeedbacks" element={<AdminFeedback/>}/>
       <Route path="/adminuser" element={<Adminuser/>}/>
-      <Route path="/adminuserdetails" element={<Adminuserdetail/>}/>
+     <Route path="/adminuserdetails/:id" element={<Adminuserdetail/>}/>
       <Route path="/adminviewrooms" element={<Adminviewroom/>}/>
       <Route path="/adminupdateroom/:id" element={<Adminupdateroom/>}/>
     </Routes>

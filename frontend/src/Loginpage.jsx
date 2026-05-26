@@ -11,21 +11,54 @@ export default function Loginpage() {
   const handlelogin = async (e) => {
     e.preventDefault();
     const cleanemail = (email || "").toLowerCase().trim();
-    const response = await fetch('https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/loginGuest', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
+    let apiURL = "";
+
+if (cleanemail === "admin@hotel.com") {
+  apiURL = "https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/loginAdmin";
+}
+else if (cleanemail.includes("staff")) {
+  apiURL = "https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/loginStaff";
+}
+else {
+  apiURL = "https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/loginGuest";
+}
+
+const response = await fetch(apiURL, {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password })
+});
     const data = await response.json();
     if (data.status === 'success') {
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('guestpanel', email);
-      localStorage.setItem('role', 'guest');
-      navigate('/');
-    } else {
+
+  localStorage.setItem('token', data.token);
+
+  if (cleanemail === "admin@hotel.com") {
+
+    localStorage.setItem('adminEmail', email);
+    localStorage.setItem('role', 'admin');
+    navigate('/admindashboard');
+
+  }
+  else if (cleanemail.includes("staff")) {
+
+    localStorage.setItem('receptionistemail', email);
+    localStorage.setItem('role', 'receptionist');
+    navigate('/admindashboard');
+
+  }
+  else {
+
+    localStorage.setItem('guestpanel', email);
+    localStorage.setItem('role', 'guest');
+    navigate('/');
+
+  }
+}
+    else {
       alert(data.message);
     }
-  }
+  };
   return (
     <>
       <div className="outer">

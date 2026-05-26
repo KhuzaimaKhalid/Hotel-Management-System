@@ -69,9 +69,22 @@ WHERE g.user_id = $1
     }
 }
 
+const getAllInvoices = async (req, res) => {
+    try {
+
+        const result = await pool.query('SELECT * FROM invoice')
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status: "failed", message: "failed to fetch invoices"})
+    }
+}
 
 module.exports = {
     createInvoice,
     getInvoiceById,
-    getInvoiceByUser
+    getInvoiceByUser,
+    getAllInvoices
 }

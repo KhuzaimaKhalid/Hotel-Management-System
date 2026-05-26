@@ -6,17 +6,17 @@ import "../CSS/style.css";
 export default function Adminviewrooms() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [roomsOpen, setRoomsOpen] = useState(true); 
-  
+  const [roomsOpen, setRoomsOpen] = useState(true);
+
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const role = localStorage.getItem("role") || "admin";
 
   const fetchRooms = () => {
     setLoading(true);
-    axios.get("http://localhost:4000/viewrooms")
+    axios.get("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/room/getAllRooms")
       .then((res) => {
-        setRooms(res.data);
+        setRooms(res.data.data);
         setLoading(false);
       })
       .catch((err) => {
@@ -38,7 +38,7 @@ export default function Adminviewrooms() {
       const response = await axios.delete(`http://localhost:4000/deleteroom/${roomId}`);
       if (response.data.success) {
         alert(`🗑️ Room ${roomNum} deleted successfully.`);
-        setRooms((prev) => prev.filter((room) => room.roomid !== roomId));
+        setRooms((prev) => prev.filter((room) => room.id !== roomId));
       }
     } catch (err) {
       alert("Failed to delete room: " + (err.response?.data?.error || err.message));
@@ -62,7 +62,7 @@ export default function Adminviewrooms() {
             <p style={{ textTransform: "capitalize" }}>{role} panel</p>
           </div>
         </div>
-         
+
         <nav className="nav">
           <a href="/admindashboard"><span className="icon">👥</span> Dashboard</a>
           <div className="dropdown">
@@ -77,7 +77,7 @@ export default function Adminviewrooms() {
               </div>
             )}
           </div>
-          <a href="/adminfeedbacks"><span className="icon">📊</span> Feedbacks</a>
+         
           <a style={{ cursor: "pointer" }} onClick={handleLogout}><span className="icon">🚪</span> Logout</a>
         </nav>
       </aside>
@@ -104,34 +104,31 @@ export default function Adminviewrooms() {
           ) : (
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: "25px" }}>
               {rooms.map((room) => (
-                <div key={room.roomid} style={{ background: "#fff", borderRadius: "8px", overflow: "hidden", boxShadow: "0 4px 6px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column" }}>
-                  <div style={{ height: "180px", background: "#edf2f7", position: "relative" }}>
-                    <img src={`/images/${room.image}`} alt="Room Layout" onError={(e) => { e.target.src = "https://placehold.co/600x400?text=No+Image"; }} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                    <span style={{ position: "absolute", top: "12px", right: "12px", padding: "4px 10px", borderRadius: "20px", fontSize: "0.75rem", fontWeight: "700", background: room.status.toLowerCase() === "available" ? "#c6f6d5" : "#feebc8", color: room.status.toLowerCase() === "available" ? "#22543d" : "#744210" }}>
-                      {room.status}
-                    </span>
-                  </div>
+                <div key={room.id} style={{ background: "#fff", borderRadius: "8px", overflow: "hidden", boxShadow: "0 4px 6px rgba(0,0,0,0.05)", display: "flex", flexDirection: "column" }}>
+                 
 
                   <div style={{ padding: "20px", flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
                     <div>
                       <h3 style={{ margin: "0 0 5px 0" }}>Room {room.roomnumber} (Floor {room.floor})</h3>
-                      <p style={{ color: "#4a5568", fontWeight: "600", fontSize: "0.85rem", margin: "0 0 10px 0" }}>🏷️ {room.roomtype}</p>
+                      <p style={{ color: "#4a5568", fontWeight: "600", fontSize: "0.85rem", margin: "0 0 10px 0" }}>
+                        🏷️ {room.typename}
+                      </p>
                       <p style={{ color: "#718096", fontSize: "0.9rem", minHeight: "40px" }}>{room.description}</p>
                     </div>
 
                     <div style={{ borderTop: "1px solid #edf2f7", paddingTop: "15px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <strong>PKR {parseFloat(room.price).toLocaleString()}</strong>
+                     <strong>{room.typename}</strong>
                       <div>
                         {/* 📝 Update Button - Redirects to the new Edit Page */}
-                        <button 
-                          onClick={() => navigate(`/adminupdateroom/${room.roomid}`)} 
+                        <button
+                          onClick={() => navigate(`/adminupdateroom/${room.id}`)}
                           style={{ background: "#e2e8f0", color: "#4a5568", border: "none", padding: "6px 12px", borderRadius: "4px", marginRight: "8px", cursor: "pointer", fontWeight: "600" }}
                         >
                           Update
                         </button>
                         {/* 🗑️ Delete Button */}
-                        <button 
-                          onClick={() => handleDelete(room.roomid, room.roomnumber)} 
+                        <button
+                          onClick={() => handleDelete(room.id, room.roomnumber)}
                           style={{ background: "#fed7d7", color: "#9b2c2c", border: "none", padding: "6px 12px", borderRadius: "4px", cursor: "pointer", fontWeight: "600" }}
                         >
                           Delete

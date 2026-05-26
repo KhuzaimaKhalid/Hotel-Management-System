@@ -39,8 +39,20 @@ const getRoomTypeById = async(req,res)=>{
         res.status(500).json({status:"failed",message:"get roomtype failed"})
     }
 }
+const getAllRoomTypes = async (req, res) => {
+    try {
 
+        const result = await pool.query('SELECT * FROM roomtype')
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status: "failed", message: "failed to fetch room types"})
+    }
+}
 module.exports = {
     createRoomType,
-    getRoomTypeById
+    getRoomTypeById,
+    getAllRoomTypes
 }

@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
+import axios from "axios";
 import "../CSS/style.css";
 
 export default function Adminuserdetail() {
@@ -9,19 +10,25 @@ export default function Adminuserdetail() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roomsOpen, setRoomsOpen] = useState(false);
 
-  // Standalone mock data initialized using the URL parameter ID
-  const [user, setUser] = useState({
-    _id: id || "u1",
-    username: "Jane Doe",
-    email: "jane.doe@example.com",
-    role: "guest",
-  });
+ const [user, setUser] = useState(null);
   
-  const [selectedRole, setSelectedRole] = useState(user.role);
+  const [selectedRole, setSelectedRole] = useState("");
 
   const adminEmail = localStorage.getItem("adminEmail");
   const receptionistEmail = localStorage.getItem("receptionistemail");
   const role = localStorage.getItem("role");
+
+  useEffect(() => {
+  axios
+    .get(`https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/getUserById/${id}`)
+    .then((res) => {
+      setUser(res.data.data);
+      setSelectedRole(res.data.data.role);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+}, [id]);
 
   // Auth Guard Check
   if (
@@ -41,7 +48,7 @@ export default function Adminuserdetail() {
 
   // Local state update role simulation
   const handleRoleUpdate = () => {
-    setUser((prev) => ({ ...prev, role: selectedRole }));
+    setUser((prev) => ({ ...prev, role_id: selectedRole }));
     alert(`User role updated successfully to "${selectedRole}" (Local State Only)`);
     navigate("/adminuser");
   };
@@ -121,10 +128,9 @@ export default function Adminuserdetail() {
         <section className="content">
           <h2>User Details / Update Role</h2>
           <div style={{ padding: "20px", background: "#fff", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)" }}>
-            <p style={{ margin: "20px 0" }}><strong>User ID:</strong> {user._id}</p>
-            <p style={{ margin: "20px 0" }}><strong>Username:</strong> {user.username}</p>
+            <p style={{ margin: "20px 0" }}><strong>User ID:</strong> {user.id}</p>
             <p style={{ margin: "20px 0" }}><strong>Email:</strong> {user.email}</p>
-            <p style={{ margin: "20px 0" }}><strong>Current Role:</strong> {user.role}</p>
+            <p><strong>Current Role:</strong> {user.role}</p>
 
             <div style={{ margin: "20px 0" }}>
               <label htmlFor="role-select" style={{ marginRight: "10px" }}><strong>Update Role:</strong></label>

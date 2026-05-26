@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "../CSS/style.css";
 import { Navigate, useNavigate } from "react-router-dom";
+import BarChart from "./BarChart";
 
 export default function Admindashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -74,7 +75,7 @@ export default function Admindashboard() {
           {role === "admin" && (
             <a href="/adminuser"><span className="icon">👥</span> Users</a>
           )}
-          <a href="/adminfeedbacks"><span className="icon">📊</span> Feedbacks</a>
+         
           <a style={{ cursor: "pointer" }} onClick={handleLogout}><span className="icon">🚪</span> Logout</a>
         </nav>
 
@@ -133,6 +134,9 @@ export default function Admindashboard() {
             </div>
 
           </div>
+          <div style={{ marginTop: "40px" }}>
+  <BarChart />
+</div>
         </section>
       </main>
     </div>

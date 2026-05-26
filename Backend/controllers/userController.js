@@ -164,7 +164,7 @@ const loginAdmin = async (req, res) => {
             return res.status(403).json({ status: "failed", message: "Access denied, not an admin" })
         }
 
-        const isMatch = await bcrypt.compare(password,user.password)
+        const isMatch = password === user.password
         if (user.email === email && isMatch) {
             const token = jwt.sign({ userID: user.id, role_id: user.role_id }, process.env.JWT_SECRET, { expiresIn: '15m' })
             res.status(200).send({ "status": "success", "message": "Admin Login Success", "token": token })
@@ -190,11 +190,81 @@ const getGuestId = async (req, res) => {
   }
 }
 
+const getAllGuests = async (req, res) => {
+    try {
+
+        const result = await pool.query('SELECT * FROM guest')
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+
+        console.log(error)
+
+        res.status(500).json({status: "failed", message: "failed to fetch guests"})
+    }
+}
+
+const getAllStaff = async (req, res) => {
+    try {
+
+        const result = await pool.query('SELECT * FROM staff')
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+
+        console.log(error)
+
+        res.status(500).json({status: "failed", message: "failed to fetch sraff"})
+    }
+}
+
+const getAllUsers = async (req, res) => {
+    try {
+
+        const result = await pool.query(`SELECT id,email,role_id FROM users`) 
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+
+        console.log(error)
+
+        res.status(500).json({status: "failed", message: "failed to fetch users"})
+    }
+}
+
+const getUserById = async (req, res) => {
+  try {
+
+    const { id } = req.params;
+
+    const result = await pool.query('SELECT * FROM users WHERE id = $1',[id]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({status: "failed",message: "user not found"});
+    }
+
+    res.status(200).json({status: "success",data: result.rows[0]});
+
+  } catch (error) {
+
+    console.log(error);
+
+    res.status(500).json({
+      status: "failed", message: "failed to fetch user"});
+  }
+};
 module.exports = {
     guestSignup,
     staffSignup,
     loginGuest,
     loginStaff,
     loginAdmin,
-    getGuestId
+    getGuestId,
+    getAllGuests,
+    getAllStaff,
+    getAllUsers,
+    getUserById
 }

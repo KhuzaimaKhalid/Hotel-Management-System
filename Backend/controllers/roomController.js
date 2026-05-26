@@ -46,7 +46,30 @@ const getRoomById = async(req,res)=>{
     }
 }
 
+const getAllRooms = async (req, res) => {
+    try {
+
+        const result = await pool.query(`
+            SELECT 
+                room.id,
+                room.roomnumber,
+                room.floor,
+                roomtype.typename
+            FROM room
+            JOIN roomtype
+            ON room.roomtype_id = roomtype.id
+        `)
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status: "failed", message: "failed to fetch rooms"})
+    }
+}
+
 module.exports = {
     createRoom,
-    getRoomById
+    getRoomById,
+    getAllRooms
 }

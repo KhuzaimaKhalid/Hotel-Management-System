@@ -35,9 +35,7 @@ export default function Header() {
             <li><Link to="/invoice">Invoices</Link></li>
           )}
 
-          {(guestEmail || adminEmail || receptionistemail) && (
-            <li><Link to={`/feedbacks/${userId || "guest"}`}>Feedbacks</Link></li>
-          )}
+         
 
           {role === "admin" && adminEmail && (
             <li>

@@ -1,25 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
+import axios from "axios";
 import "../CSS/style.css";
 
-// Sample mock data to replace the API response
-const mockUsers = [
-  { _id: "u1", username: "Alex Morgan", email: "alex@stayease.com", role: "receptionist" },
-  { _id: "u2", username: "Sarah Jenkins", email: "sarah@gmail.com", role: "guest" },
-  { _id: "u3", username: "Michael Chang", email: "michael@gmail.com", role: "guest" },
-  { _id: "u4", username: "Admin Boss", email: "admin@stayease.com", role: "admin" }
-];
 
 export default function Adminuser() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roomsOpen, setRoomsOpen] = useState(false);
-  const [users, setUsers] = useState(mockUsers);
+  const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
 
   const navigate = useNavigate();
   const adminEmail = localStorage.getItem("adminEmail");
   const receptionistEmail = localStorage.getItem("receptionistemail");
   const role = localStorage.getItem("role");
+
+  useEffect(() => {
+
+    axios
+      .get("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/getAllUsers")
+      .then((res) => {
+        console.log(res.data.data)
+        setUsers(res.data.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+  }, []);
 
   // Auth Guard Check
   if (
@@ -48,12 +56,6 @@ export default function Adminuser() {
     navigate(`/adminuserdetails/${id}`);
   };
 
-  const handleDeleteUser = (id) => {
-    if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter(user => user._id !== id));
-      alert("User deleted successfully (Local State Only)");
-    }
-  };
 
   return (
     <div className="wrap">
@@ -85,7 +87,7 @@ export default function Adminuser() {
             </div>
           </div>
         )}
-         
+
         <nav className="nav">
           <a href="/admindashboard"><span className="icon">👥</span> Dashboard</a>
           <div className="dropdown">
@@ -100,13 +102,13 @@ export default function Adminuser() {
               </div>
             )}
           </div>
-            
+
           {role === "admin" && (
             <a href="/adminuser"><span className="icon">👥</span> Users</a>
           )}
-          <a href="/adminfeedbacks"><span className="icon">📊</span> Feedbacks</a>
-          <button 
-            onClick={handleLogout} 
+          
+          <button
+            onClick={handleLogout}
             style={{ background: 'none', border: 'none', padding: 0, width: '100%', textAlign: 'left', cursor: 'pointer', color: 'inherit' }}
           >
             <span className="icon">🚪</span> Logout
@@ -162,40 +164,39 @@ export default function Adminuser() {
                 <th>Name</th>
                 <th>Email</th>
                 <th>Role</th>
-                <th>Action</th>
+
               </tr>
             </thead>
             <tbody>
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
                   <tr
-                    key={user._id}
+                    key={user.id}
                     style={{ cursor: "pointer" }}
-                    onClick={() => handleUserClick(user._id)}
+                    onClick={() => handleUserClick(user.id)}
                   >
                     <td>{user.username}</td>
                     <td>{user.email}</td>
                     <td>{user.role}</td>
                     <td>
-                      <button 
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevents navigating to details page when clicking delete
-                          handleDeleteUser(user._id);
-                        }}
-                        style={{
-                          padding: "8px 12px",
-                          fontSize: "14px", 
-                          background: "#dc2626", 
-                          color: "white",
-                          border: "none",
-                          borderRadius: "6px",
-                          cursor: "pointer"
-                        }} 
-                        className='buttons'
-                      >
-                        Delete
-                      </button>
-                    </td>
+
+                    </td> <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleUserClick(user.id);
+                      }}
+                      style={{
+                        padding: "8px 12px",
+                        fontSize: "14px",
+                        background: "#2563eb",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "6px",
+                        cursor: "pointer"
+                      }}
+                    >
+                      View
+                    </button>
                   </tr>
                 ))
               ) : (
