@@ -60,7 +60,7 @@ const loginGuest = async (req, res) => {
         }
 
         const user = result.rows[0]
-        const isMatch = bcrypt.compare(user.password, password)
+        const isMatch = await bcrypt.compare(password,user.password)
         if (user.email === email && isMatch) {
             const token = jwt.sign({ userID: user.id, role_id: user.role_id }, process.env.JWT_SECRET, { expiresIn: '15m' })
             res.status(200).send({ "status": "success", "message": "Login Success", "token": token })
@@ -164,7 +164,7 @@ const loginAdmin = async (req, res) => {
             return res.status(403).json({ status: "failed", message: "Access denied, not an admin" })
         }
 
-        const isMatch = user.password === password
+        const isMatch = await bcrypt.compare(password,user.password)
         if (user.email === email && isMatch) {
             const token = jwt.sign({ userID: user.id, role_id: user.role_id }, process.env.JWT_SECRET, { expiresIn: '15m' })
             res.status(200).send({ "status": "success", "message": "Admin Login Success", "token": token })
