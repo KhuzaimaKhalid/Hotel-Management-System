@@ -40,7 +40,21 @@ const getRoleById = async(req,res)=>{
     }
 }
 
+const getAllRole = async (req, res) => {
+    try {
+
+        const result = await pool.query('SELECT * FROM role')
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status: "failed", message: "failed to fetch role"})
+    }
+}
+
 module.exports = {
     createRole,
-    getRoleById
+    getRoleById,
+    getAllRole
 }

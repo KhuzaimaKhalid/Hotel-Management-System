@@ -58,7 +58,21 @@ const getServiceRequestById = async(req,res)=>{
     }
 }
 
+const getAllServiceRequest = async (req, res) => {
+    try {
+
+        const result = await pool.query('SELECT * FROM servicerequest')
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status: "failed", message: "failed to fetch service request"})
+    }
+}
+
 module.exports = {
     createServiceRequest,
-    getServiceRequestById
+    getServiceRequestById,
+    getAllServiceRequest
 }

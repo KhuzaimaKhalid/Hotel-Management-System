@@ -42,7 +42,21 @@ const getTaskById = async (req, res) => {
     }
 }
 
+const getAlltask = async (req, res) => {
+    try {
+
+        const result = await pool.query('SELECT * FROM housekeepingtask')
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status: "failed", message: "failed to fetch task"})
+    }
+}
+
 module.exports = {
     createTask,
-    getTaskById
+    getTaskById,
+    getAlltask
 }

@@ -45,7 +45,21 @@ const getPaymentById = async(req,res)=>{
     }
 }
 
+const getAllPayment = async (req, res) => {
+    try {
+
+        const result = await pool.query('SELECT * FROM payment')
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status: "failed", message: "failed to fetch payment"})
+    }
+}
+
 module.exports = {
     createPayment,
-    getPaymentById
+    getPaymentById,
+    getAllPayment
 }

@@ -42,7 +42,21 @@ const getRequestById = async (req, res) => {
     }
 }
 
+
+const getAllRequest = async (req, res) => {
+    try {
+
+        const result = await pool.query('SELECT * FROM maintenancerequest')
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status: "failed", message: "failed to fetch Request"})
+    }
+}
 module.exports = {
     createRequest,
-    getRequestById
+    getRequestById,
+    getAllRequest
 }
