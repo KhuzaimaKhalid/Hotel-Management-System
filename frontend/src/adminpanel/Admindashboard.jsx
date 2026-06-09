@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../CSS/style.css";
 import { Navigate, useNavigate } from "react-router-dom";
 import BarChart from "./BarChart";
@@ -6,13 +6,23 @@ import BarChart from "./BarChart";
 export default function Admindashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roomsOpen, setroomsOpen] = useState(false);
+  const [totalRevenue, setTotalRevenue] = useState(0);
   const navigate = useNavigate();
 
   const adminEmail = localStorage.getItem("adminEmail");
   const receptionistemail = localStorage.getItem("receptionistemail");
   const role = localStorage.getItem("role");
 
-  
+  useEffect(() => {
+    fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/payment/getTotalRevenue")
+      .then((res) => res.json())
+      .then((data) => {
+        setTotalRevenue(data.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+
   if (
     (!adminEmail && !receptionistemail) ||
     (role !== "admin" && role !== "receptionist")
@@ -24,7 +34,7 @@ export default function Admindashboard() {
   const [stats] = useState({
     totalUsers: 142,
     totalBookings: 89,
-    totalRevenue: 546200,
+    totalRevenue: 1200000,
     totalFeedbacks: 34
   });
 
@@ -56,7 +66,7 @@ export default function Admindashboard() {
             <p style={{ textTransform: "capitalize" }}>{role} panel</p>
           </div>
         </div>
-         
+
         <nav className="nav">
           <a href="/admindashboard"><span className="icon">👥</span> Dashboard</a>
           <div className="dropdown">
@@ -71,11 +81,11 @@ export default function Admindashboard() {
               </div>
             )}
           </div>
-          
+
           {role === "admin" && (
             <a href="/adminuser"><span className="icon">👥</span> Users</a>
           )}
-         
+
           <a style={{ cursor: "pointer" }} onClick={handleLogout}><span className="icon">🚪</span> Logout</a>
         </nav>
 
@@ -110,9 +120,9 @@ export default function Admindashboard() {
         {/* Dashboard Content Metrics Reports */}
         <section style={{ padding: "40px max(20px, 4%)" }}>
           <h2 style={{ marginBottom: "24px", fontSize: "1.75rem", fontWeight: "700", color: "#1a202c" }}>System Operational Reports</h2>
-          
+
           <div className="grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
-            
+
             <div className="card" onClick={() => handleCardClick("/adminuser")} style={{ cursor: "pointer", background: "#fff", padding: "24px", borderRadius: "12px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
               <h3 >Total Users</h3>
               <div className="stat" >{stats.totalUsers}</div>
@@ -125,7 +135,9 @@ export default function Admindashboard() {
 
             <div className="card" onClick={() => handleCardClick("/bookings-revenue")} >
               <h3>Total Gross Revenue</h3>
-              <div className="stat" >PKR {stats.totalRevenue.toLocaleString()}</div>
+              <div className="stat">
+                PKR {Number(totalRevenue).toLocaleString()}
+              </div>
             </div>
 
             <div className="card" onClick={() => handleCardClick("/adminfeedbacks")} >
@@ -135,8 +147,8 @@ export default function Admindashboard() {
 
           </div>
           <div style={{ marginTop: "40px" }}>
-  <BarChart />
-</div>
+            <BarChart />
+          </div>
         </section>
       </main>
     </div>

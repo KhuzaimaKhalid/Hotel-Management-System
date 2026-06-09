@@ -58,8 +58,20 @@ const getAllPayment = async (req, res) => {
     }
 }
 
+
+const getTotalRevenue = async(req,res) =>{
+    try {
+        const result = await pool.query('select sum(amount) from payment')
+        res.status(200).json({status: "success", data: result.rows[0].sum})
+    } catch (error) {
+         console.log(error)
+        res.status(500).json({status: "failed", message: "failed to create revenue"})
+    }
+}
+
 module.exports = {
     createPayment,
     getPaymentById,
-    getAllPayment
+    getAllPayment,
+    getTotalRevenue
 }
