@@ -30,18 +30,14 @@ export default function Adminupdateroom() {
       try {
         // Fetch types and statuses first
         const typesRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/roomtype/getAllRoomTypes`);
-        setRoomTypes(typesRes.data);
-        const statusRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/roomstatus/getAllRoomStatus`);
-        setRoomStatus(statusRes.data);
+        setRoomTypes(typesRes.data.data); // was typesRes.data
 
-        // Fetch target single room details
         const roomRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/room/getRoomById/${id}`);
-        if (roomRes.data) {
-          setRoomNumber(roomRes.data.roomnumber);
-          setFloor(roomRes.data.floor);
-          setSelectedType(roomRes.data.roomtypeid);
-          setSelectedStatus(roomRes.data.roomstatusid);
-          setDescription(roomRes.data.description || "");
+        const room = roomRes.data.data[0]; // was roomRes.data
+        if (room) {
+          setRoomNumber(room.roomnumber);
+          setFloor(room.floor);
+          setSelectedType(room.roomtype_id);
         }
         setLoading(false);
       } catch (err) {
@@ -67,13 +63,18 @@ export default function Adminupdateroom() {
     }
 
     try {
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/room/updateRoom/${id}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" }
+      const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/room/updateRoom/${id}`, {
+        roomnumber: roomNumber,
+        floor: floor,
+        roomtype_id: selectedType,
+        reservationstatus: selectedStatus === "true"
       });
+      
 
-      if (response.data.success) {
-        alert("🎉 Room details configured and updated successfully!");
-        navigate("/adminviewrooms"); // Redirects back to history view grid
+
+      if (response.data.status === "success") {
+        alert("🎉 Room updated successfully!");
+        navigate("/adminviewrooms");
       }
     } catch (err) {
       alert("Update execution failed: " + (err.response?.data?.error || err.message));
@@ -99,7 +100,7 @@ export default function Adminupdateroom() {
       <main className="main" style={{ background: "#f8f9fa", minHeight: "100vh" }}>
         <section className="content" style={{ padding: "30px" }}>
           <h2>Modify Operational Profile Room {roomNumber}</h2>
-          
+
           <div style={{ background: "#fff", padding: "30px", borderRadius: "8px", boxShadow: "0 1px 3px rgba(0,0,0,0.1)", maxWidth: "600px" }}>
             <form onSubmit={handleUpdate}>
               <div style={{ marginBottom: "15px" }}>
@@ -115,21 +116,24 @@ export default function Adminupdateroom() {
               <div style={{ marginBottom: "15px" }}>
                 <label style={{ display: "block", marginBottom: "5px", fontWeight: "600" }}>Room Type Category</label>
                 <select value={selectedType} onChange={(e) => setSelectedType(e.target.value)} required style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", background: "#fff" }}>
-                  {roomTypes.map((t) => <option key={t.roomtypeid} value={t.roomtypeid}>{t.typename}</option>)}
+                {roomTypes.map((t) => <option key={t.id} value={t.id}>{t.typename}</option>)}
                 </select>
               </div>
 
               <div style={{ marginBottom: "15px" }}>
                 <label style={{ display: "block", marginBottom: "5px", fontWeight: "600" }}>Current Status</label>
-                <select value={selectedStatus} onChange={(e) => setSelectedStatus(e.target.value)} required style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", background: "#fff" }}>
-                  {roomStatus.map((s) => <option key={s.roomstatusid} value={s.roomstatusid}>{s.statusname}</option>)}
+                <select
+                  value={selectedStatus}
+                  onChange={(e) => setSelectedStatus(e.target.value)}
+                  required
+                  style={{ width: "100%", padding: "8px", borderRadius: "4px", border: "1px solid #ccc", background: "#fff" }}
+                >
+                  <option value="true">Booked</option>
+                  <option value="false">Not Booked</option>
                 </select>
               </div>
 
-              <div style={{ marginBottom: "15px" }}>
-                <label style={{ display: "block", marginBottom: "5px", fontWeight: "600" }}>Change Showcase Picture (Optional)</label>
-                <input type="file" accept="image/*" onChange={(e) => setImageFile(e.target.files[0])} style={{ width: "100%" }} />
-              </div>
+             
 
               <div style={{ marginBottom: "20px" }}>
                 <label style={{ display: "block", marginBottom: "5px", fontWeight: "600" }}>Description Details</label>
