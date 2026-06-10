@@ -18,7 +18,7 @@ export default function Adminuser() {
   useEffect(() => {
 
     axios
-      .get("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/getAllUsers")
+      .get(`${import.meta.env.VITE_API_URL}/api/user/getAllUsers`)
       .then((res) => {
         console.log(res.data.data)
         setUsers(res.data.data);

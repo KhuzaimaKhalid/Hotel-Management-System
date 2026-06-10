@@ -68,6 +68,26 @@ const getAllRooms = async (req, res) => {
     }
 }
 
+const updateRoom = async(req,res) =>{
+    try {
+        const {id} = req.params
+        const {roomnumber,floor,roomtype_id} = req.body
+
+        if(!roomnumber || !floor || !roomtype_id){
+            return res.status(400).json({status:"failed",message:"All fields are required"})
+        }
+
+        const result = await pool.query('UPDATE room SET roomnumber = $1, floor = $2, roomtype_id = $3 WHERE id = $4',[roomnumber,floor,roomtype_id,id])
+
+        if(!result){
+            return res.status(400).json({status:"failed",message:"data not fetched"})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status:"failed",message:"update room failed"})
+    }
+}
+
 module.exports = {
     createRoom,
     getRoomById,

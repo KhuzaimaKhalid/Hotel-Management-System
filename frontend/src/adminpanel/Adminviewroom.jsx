@@ -14,7 +14,7 @@ export default function Adminviewrooms() {
 
   const fetchRooms = () => {
     setLoading(true);
-    axios.get("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/room/getAllRooms")
+    axios.get(`${import.meta.env.VITE_API_URL}/api/room/getAllRooms`)
       .then((res) => {
         setRooms(res.data.data);
         setLoading(false);
@@ -35,7 +35,7 @@ export default function Adminviewrooms() {
     if (!confirmDelete) return;
 
     try {
-      const response = await axios.delete(`http://localhost:4000/deleteroom/${roomId}`);
+      const response = await axios.delete(`${import.meta.env.VITE_API_URL}/api/room/deleteRoom/${roomId}`);
       if (response.data.success) {
         alert(`🗑️ Room ${roomNum} deleted successfully.`);
         setRooms((prev) => prev.filter((room) => room.id !== roomId));

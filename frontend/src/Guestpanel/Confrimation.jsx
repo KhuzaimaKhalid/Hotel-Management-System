@@ -13,11 +13,11 @@ const userID = token ? JSON.parse(atob(token.split('.')[1])).userID : null;
 
   useEffect(() => {
   if (state && userID) {
-    fetch(`https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/getGuestId/${userID}`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/user/getGuestId/${userID}`)
     .then(res => res.json())
     .then(guestData => {
       const guestId = guestData.guest_id;
-      fetch('https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/reservation/createReservation', {
+      fetch(`${import.meta.env.VITE_API_URL}/api/reservation/createReservation`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -32,7 +32,7 @@ const userID = token ? JSON.parse(atob(token.split('.')[1])).userID : null;
       .then(res => res.json())
       .then(resData => {
         if (resData.status === 'success') {
-          fetch('https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/invoice/createInvoice', {
+          fetch(`${import.meta.env.VITE_API_URL}/api/invoice/createInvoice`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({

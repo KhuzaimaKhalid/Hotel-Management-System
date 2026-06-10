@@ -54,7 +54,7 @@ export default function Invoicepage() {
 
   useEffect(() => {
     if (userID) {
-      fetch(`https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/invoice/getInvoiceByUser/${userID}`)
+      fetch(`${import.meta.env.VITE_API_URL}/api/invoice/getInvoiceByUser/${userID}`)
         .then(res => res.json())
         .then(data => {
           if (data.status === 'success') setBookings(data.data);

@@ -20,7 +20,7 @@ export default function Adminuserdetail() {
 
   useEffect(() => {
   axios
-    .get(`https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/getUserById/${id}`)
+    .get(`${import.meta.env.VITE_API_URL}/api/user/getUserById/${id}`)
     .then((res) => {
       setUser(res.data.data);
       setSelectedRole(res.data.data.role);

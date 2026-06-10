@@ -22,7 +22,7 @@ export default function Adminaddroom() {
   useEffect(() => {
     axios
       .get(
-        "https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/roomtype/getAllRoomTypes"
+        `${import.meta.env.VITE_API_URL}/api/roomtype/getAllRoomTypes`
       )
       .then((res) => {
 
@@ -62,7 +62,7 @@ export default function Adminaddroom() {
 
     try {
       const response = await axios.post(
-        "https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/room/createRoom",
+        `${import.meta.env.VITE_API_URL}/api/room/createRoom`,
         {
           roomnumber: roomNumber,
           floor: floor,

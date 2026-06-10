@@ -29,13 +29,13 @@ export default function Adminupdateroom() {
     const fetchRoomData = async () => {
       try {
         // Fetch types and statuses first
-        const typesRes = await axios.get("http://localhost:4000/roomtype");
+        const typesRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/roomtype/getAllRoomTypes`);
         setRoomTypes(typesRes.data);
-        const statusRes = await axios.get("http://localhost:4000/roomstatus");
+        const statusRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/roomstatus/getAllRoomStatus`);
         setRoomStatus(statusRes.data);
 
         // Fetch target single room details
-        const roomRes = await axios.get(`http://localhost:4000/getroom/${id}`);
+        const roomRes = await axios.get(`${import.meta.env.VITE_API_URL}/api/room/getRoomById/${id}`);
         if (roomRes.data) {
           setRoomNumber(roomRes.data.roomnumber);
           setFloor(roomRes.data.floor);
@@ -67,7 +67,7 @@ export default function Adminupdateroom() {
     }
 
     try {
-      const response = await axios.put(`http://localhost:4000/updateroom/${id}`, formData, {
+      const response = await axios.put(`${import.meta.env.VITE_API_URL}/api/room/updateRoom/${id}`, formData, {
         headers: { "Content-Type": "multipart/form-data" }
       });
 

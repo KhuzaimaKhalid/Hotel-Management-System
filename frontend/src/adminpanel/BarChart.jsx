@@ -71,36 +71,37 @@ export default function BarChart() {
           serviceRequestRes,
           notificationRes
         ] = await Promise.all([
+          fetch(`${import.meta.env.VITE_API_URL}/api/user/getAllGuests`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/getAllGuests"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/user/getAllStaff`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/getAllStaff"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/user/getAllUsers`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/getAllUsers"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/reservation/getAllReservations`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/reservation/getAllReservations"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/invoice/getAllInvoices`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/invoice/getAllInvoices"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/payment/getAllPayment`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/payment/getAllPayment"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/department/getDeparments`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/department/getDeparments"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/maintenancerequest/getAllRequest`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/maintenancerequest/getAllRequest"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/housekeepingtask/getAlltask`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/housekeepingtask/getAlltask"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/role/getAllRole`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/role/getAllRole"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/room/getAllRooms`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/room/getAllRooms"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/roomtype/getAllRoomTypes`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/roomtype/getAllRoomTypes"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/service/getAllService`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/service/getAllService"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/servicerequest/getAllServiceRequest`),
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/servicerequest/getAllServiceRequest"),
+          fetch(`${import.meta.env.VITE_API_URL}/api/notification/getAllNotification`)
 
-          fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/notification/getAllNotification")
+
 
         ]);
 

@@ -14,7 +14,7 @@ export default function Admindashboard() {
   const role = localStorage.getItem("role");
 
   useEffect(() => {
-    fetch("https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/payment/getTotalRevenue")
+    fetch(`${import.meta.env.VITE_API_URL}/api/payment/getTotalRevenue`)
       .then((res) => res.json())
       .then((data) => {
         setTotalRevenue(data.data);

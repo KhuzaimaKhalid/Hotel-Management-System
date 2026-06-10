@@ -14,13 +14,13 @@ export default function Loginpage() {
     let apiURL = "";
 
 if (cleanemail === "admin@hotel.com") {
-  apiURL = "https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/loginAdmin";
+  apiURL = `${import.meta.env.VITE_API_URL}/api/user/loginAdmin`;
 }
 else if (cleanemail.includes("staff")) {
-  apiURL = "https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/loginStaff";
+  apiURL = `${import.meta.env.VITE_API_URL}/api/user/loginStaff`;
 }
 else {
-  apiURL = "https://ubiquitous-space-palm-tree-4jvrq4qwvwg427q4w-3000.app.github.dev/api/user/loginGuest";
+  apiURL = `${import.meta.env.VITE_API_URL}/api/user/loginGuest`;
 }
 
 const response = await fetch(apiURL, {
