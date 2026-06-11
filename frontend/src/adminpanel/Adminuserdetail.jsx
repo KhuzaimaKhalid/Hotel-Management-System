@@ -70,6 +70,24 @@ export default function Adminuserdetail() {
     }
   };
 
+  const handleDeleteUser = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this user?");
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(
+        `${import.meta.env.VITE_API_URL}/api/user/deleteUser/${user.id}`
+      );
+
+      alert("User deleted successfully");
+      navigate("/adminuser");
+    } catch (err) {
+      console.log(err);
+      alert("Delete failed");
+    }
+  };
+
   if (!user) {
     return <p style={{ padding: "20px" }}>Loading user details...</p>;
   }
@@ -177,6 +195,21 @@ export default function Adminuserdetail() {
               }}
             >
               Save Changes
+            </button>
+            <button
+              onClick={handleDeleteUser}
+              style={{
+                padding: "8px 16px",
+                marginTop: "10px",
+                marginLeft: "10px",
+                background: "#dc2626",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer"
+              }}
+            >
+              Delete User
             </button>
           </div>
         </section>
