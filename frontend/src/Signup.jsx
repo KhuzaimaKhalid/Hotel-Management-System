@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../src/CSS/style.css';
 
@@ -21,6 +22,7 @@ export default function Signup() {
 
   const [message, setMessage] = useState('');
   const [isError, setIsError] = useState(false);
+  const navigate = useNavigate();
 
   // 2. Handler to track input changes dynamically
   const handleChange = (e) => {
@@ -167,7 +169,12 @@ export default function Signup() {
           <input type="password" name="confirm_password" id="confirm_password" placeholder="Repeat your password" value={formData.confirm_password} onChange={handleChange} required />
 
           <div className="links">
-            <a href='/'>Already have an Account!</a>
+            <button
+              type="button"
+              onClick={() => navigate('/login')}
+            >
+              Already have an Account? Login
+            </button>
           </div>
 
           <input type="submit" value="Register" className="button" />
