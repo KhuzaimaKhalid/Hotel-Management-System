@@ -1,6 +1,6 @@
 const express = require('express')
 
-const { guestSignup, staffSignup, loginGuest, loginStaff, loginAdmin, getGuestId, getAllGuests, getAllStaff,getAllUsers, getUserById} = require('../controllers/userController')
+const { guestSignup, staffSignup, loginGuest, loginStaff, loginAdmin, getGuestId, getAllGuests, getAllStaff,getAllUsers, getUserById, updateUser} = require('../controllers/userController')
 const router = express.Router()
 
 router.post('/guestSignup', guestSignup)
@@ -13,6 +13,7 @@ router.post('/guestSignup', guestSignup)
 .get('/getAllGuests',getAllGuests)
 .get('/getAllStaff',getAllStaff)
 .get('/getAllUsers',getAllUsers)
-router.get('/getUserById/:id', getUserById)
+.get('/getUserById/:id', getUserById)
+.put('/updateUser/:id', updateUser)
 
 module.exports = router

@@ -255,7 +255,36 @@ const getUserById = async (req, res) => {
     res.status(500).json({
       status: "failed", message: "failed to fetch user"});
   }
-};
+}
+
+const updateUser = async(req,res) =>{
+    const { id } = req.params
+    const { email, role_id } = req.body
+    let updatedEmail = email;
+
+    if (!email || !role_id) {
+        return res.status(400).json({ status: "failed", message: "All fields are required" })
+    }
+
+    try {
+        if (role_id == 2) {
+            const parts = email.split("@")
+            updatedEmail = `${parts[0]}staff@${parts[1]}`
+        }
+
+        const result = await pool.query('UPDATE users SET email = $1, role_id = $2 WHERE id = $3 RETURNING *', [updatedEmail, role_id, id])
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({ status: "failed", message: "user not found" })
+        }
+
+        res.status(200).json({ status: "success", message: "User updated successfully", data: result.rows[0] })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ status: "failed", message: "failed to update user" })
+    }
+}
 module.exports = {
     guestSignup,
     staffSignup,
@@ -266,5 +295,6 @@ module.exports = {
     getAllGuests,
     getAllStaff,
     getAllUsers,
-    getUserById
+    getUserById,
+    updateUser
 }

@@ -10,8 +10,8 @@ export default function Adminuserdetail() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [roomsOpen, setRoomsOpen] = useState(false);
 
- const [user, setUser] = useState(null);
-  
+  const [user, setUser] = useState(null);
+
   const [selectedRole, setSelectedRole] = useState("");
 
   const adminEmail = localStorage.getItem("adminEmail");
@@ -19,16 +19,16 @@ export default function Adminuserdetail() {
   const role = localStorage.getItem("role");
 
   useEffect(() => {
-  axios
-    .get(`${import.meta.env.VITE_API_URL}/api/user/getUserById/${id}`)
-    .then((res) => {
-      setUser(res.data.data);
-      setSelectedRole(res.data.data.role);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-}, [id]);
+    axios
+      .get(`${import.meta.env.VITE_API_URL}/api/user/getUserById/${id}`)
+      .then((res) => {
+        setUser(res.data.data);
+        setSelectedRole(res.data.data.role);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, [id]);
 
   // Auth Guard Check
   if (
@@ -47,10 +47,27 @@ export default function Adminuserdetail() {
   };
 
   // Local state update role simulation
-  const handleRoleUpdate = () => {
-    setUser((prev) => ({ ...prev, role_id: selectedRole }));
-    alert(`User role updated successfully to "${selectedRole}" (Local State Only)`);
-    navigate("/adminuser");
+  const handleRoleUpdate = async () => {
+    try {
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/api/user/updateUser/${user.id}`,
+        {
+          email: user.email,
+          role_id:
+            selectedRole === "admin"
+              ? 1
+              : selectedRole === "receptionist"
+                ? 2
+                : 3,
+        }
+      );
+
+      alert("User updated successfully");
+      navigate("/adminuser");
+    } catch (err) {
+      console.log(err);
+      alert("Update failed");
+    }
   };
 
   if (!user) {
@@ -58,7 +75,7 @@ export default function Adminuserdetail() {
   }
 
   return (
-      <div className="wrap" style={{ fontFamily: "Inter, sans-serif" }}>
+    <div className="wrap" style={{ fontFamily: "Inter, sans-serif" }}>
       {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? "active" : ""}`} id="sidebar">
         <button
@@ -74,7 +91,7 @@ export default function Adminuserdetail() {
             <p style={{ textTransform: "capitalize" }}>{role} panel</p>
           </div>
         </div>
-         
+
         <nav className="nav">
           <a href="/admindashboard"><span className="icon">👥</span> Dashboard</a>
           <div className="dropdown">
@@ -89,7 +106,7 @@ export default function Adminuserdetail() {
               </div>
             )}
           </div>
-          
+
           {role === "admin" && (
             <a href="/adminuser"><span className="icon">👥</span> Users</a>
           )}
@@ -146,17 +163,17 @@ export default function Adminuserdetail() {
               </select>
             </div>
 
-            <button 
-              onClick={handleRoleUpdate} 
-              className="buttons" 
-              style={{ 
-                padding: "8px 16px", 
+            <button
+              onClick={handleRoleUpdate}
+              className="buttons"
+              style={{
+                padding: "8px 16px",
                 marginTop: "10px",
-                background: "rgb(47, 47, 47)", 
-                color: "white", 
-                border: "none", 
-                borderRadius: "6px", 
-                cursor: "pointer" 
+                background: "rgb(47, 47, 47)",
+                color: "white",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer"
               }}
             >
               Save Changes
