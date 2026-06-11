@@ -62,6 +62,7 @@ export default function Booking() {
       .then(res => res.json())
       .then(async (data) => {
         if (data.status === 'success') {
+
           const roomsWithPrice = await Promise.all(
             data.data.map(async (room) => {
               const priceRes = await fetch(`${import.meta.env.VITE_API_URL}/api/room/getRoomPrice/${room.id}`);
@@ -164,7 +165,7 @@ export default function Booking() {
 
     navigate("/billing", {
       state: {
-        roomId: room._id,
+        roomId: room.id,
         roomName: room.roomName,
         roomImage: room.image,
         roomDescription: room.description,
@@ -264,7 +265,11 @@ export default function Booking() {
                         'Images/default.png'
                 }
                 alt={room.typename}
+
               />
+              <h2 style={{ color: "#1e5aa8", marginTop: "10px" }}>
+                {room.typename} Room
+              </h2>
               <h3>{room.roomName}</h3>
               <h3>
                 Price:{" "}

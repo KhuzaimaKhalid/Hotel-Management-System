@@ -57,7 +57,10 @@ export default function Invoicepage() {
       fetch(`${import.meta.env.VITE_API_URL}/api/invoice/getInvoiceByUser/${userID}`)
         .then(res => res.json())
         .then(data => {
-          if (data.status === 'success') setBookings(data.data);
+          if (data.status === 'success') {
+            const sorted = data.data.sort((a, b) => b.id - a.id);
+            setBookings(sorted);
+          };
         })
         .catch(err => console.log(err));
     }
@@ -157,7 +160,11 @@ export default function Invoicepage() {
                 <strong>Price per Night:</strong> PKR {booking.baseprice || 0}
               </p>
               <p>
-                <strong>Total Amount:</strong> PKR {booking.roomcharges + booking.servicecharges + booking.taxamount}
+                <strong>Total Amount:</strong> PKR {
+                  (parseFloat(booking.roomcharges) || 0) +
+                  (parseFloat(booking.servicecharges) || 0) +
+                  (parseFloat(booking.taxamount) || 0)
+                }
               </p>
             </div>
 
