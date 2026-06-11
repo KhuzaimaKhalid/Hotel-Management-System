@@ -131,10 +131,27 @@ const getBookedRooms = async(req,res) =>{
     }
 }
 
+const getRoomPrice = async(req,res) =>{
+    const {id} = req.params
+
+    try {
+        const result = await pool.query('select rt.baseprice from roomtype rt inner join room r on rt.id = r.roomtype_id where r.id = $1;',[id])
+
+        if(result.rows.length === 0){
+            return res.status(400).json({status:"failed",message:"room id does not exist"})
+        }
+
+        res.status(200).json({ status: "success", price: result.rows[0].baseprice })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status:"failed",message:"failed to fetch room price"})
+    }
+}
 module.exports = {
     createRoom,
     getRoomById,
     getAllRooms,
     updateRoom,
-    deleteRoom
+    deleteRoom,
+    getRoomPrice
 }
