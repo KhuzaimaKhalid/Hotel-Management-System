@@ -73,7 +73,7 @@ export default function Adminviewrooms() {
               <div className="dropdown-content">
                 <a href="/adminaddroom">➕ Add Room</a>
                 <a href="/adminviewrooms" style={{ fontWeight: "600", color: "#1a202c" }}>👁 View Rooms</a>
-                <a href="/adminbookrooms">📖 Book Rooms</a>
+                <a href="/bookrooms">📖 Book Rooms</a>
               </div>
             )}
           </div>

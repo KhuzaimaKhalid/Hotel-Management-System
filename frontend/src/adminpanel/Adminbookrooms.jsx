@@ -21,7 +21,7 @@ export default function Adminbookrooms() {
   }
 
   useEffect(() => {
-    axios.get(`${import.meta.env.VITE_API_URL}/api/reservation/getBookedRooms`)
+    axios.get(`${import.meta.env.VITE_API_URL}/api/room/getBookedRooms`)
       .then((res) => {
         setBookedRooms(res.data.data);
         setLoading(false);

@@ -111,16 +111,17 @@ const getBookedRooms = async(req,res) =>{
     try {
         const result = await pool.query(`
             SELECT 
-                room.id,
-                room.roomnumber,
-                room.floor,
-                roomtype.typename
-            FROM room
-            JOIN roomtype
-            ON room.roomtype_id = roomtype.id
-            JOIN reservations
-            ON reservations.room_id = room.id
-            WHERE reservations.reservationstatus = 'booked'
+                r.id,
+                r.roomnumber,
+                r.floor,
+                rt.typename,
+                rr.numberofguest
+            FROM room r
+            INNER JOIN roomtype rt
+            ON r.roomtype_id = rt.id
+            INNER JOIN reservations rr
+            ON rr.room_id = r.id
+            WHERE rr.reservationstatus = true
         `)
 
         res.status(200).json({status: "success", data: result.rows})
@@ -147,11 +148,13 @@ const getRoomPrice = async(req,res) =>{
         res.status(500).json({status:"failed",message:"failed to fetch room price"})
     }
 }
+
 module.exports = {
     createRoom,
     getRoomById,
     getAllRooms,
     updateRoom,
     deleteRoom,
-    getRoomPrice
+    getRoomPrice,
+    getBookedRooms
 }
