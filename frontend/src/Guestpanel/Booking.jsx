@@ -60,19 +60,27 @@ export default function Booking() {
   useEffect(() => {
     fetch(`${import.meta.env.VITE_API_URL}/api/room/getAllRooms`)
       .then(res => res.json())
-      .then(data => {
+      .then(async (data) => {
         if (data.status === 'success') {
-          const roomsWithPrice = data.data.map((room) => ({
-            ...room,
-            dynamicPrice: calculatePrice(room.baseprice),
-          }));
+          const roomsWithPrice = await Promise.all(
+            data.data.map(async (room) => {
+              const priceRes = await fetch(`${import.meta.env.VITE_API_URL}/api/room/getRoomPrice/${room.id}`);
+              const priceData = await priceRes.json();
+              const basePrice = parseFloat(priceData.price) || 0;
+              return {
+                ...room,
+                baseprice: basePrice,
+                dynamicPrice: calculatePrice(basePrice),
+              };
+            })
+          );
           setRoomsData(roomsWithPrice);
           setFilteredRooms(roomsWithPrice);
         }
       })
       .catch(err => console.log(err));
   }, []);
-  
+
   useEffect(() => {
     if (roomsData.length > 0) {
       const updated = roomsData.map((room) => ({
@@ -130,7 +138,7 @@ export default function Booking() {
     // Process price updates instantly down to view layout lists
     const processedRooms = roomsData.map((room) => ({
       ...room,
-      dynamicPrice: calculatePrice(room.price),
+      dynamicPrice: calculatePrice(room.baseprice),
     }));
 
     setFilteredRooms(processedRooms);
@@ -165,7 +173,7 @@ export default function Booking() {
         roomCount,
         adults,
         children,
-        dynamicPrice: calculatePrice(room.price),
+        dynamicPrice: calculatePrice(room.baseprice),
         guestName,
         guestEmail,
         guestId: user?._id,
@@ -248,12 +256,20 @@ export default function Booking() {
               onClick={() => goToBilling(room)}
               style={{ cursor: "pointer" }}
             >
-              <img src={`Images/${room.image}`} alt={room.roomName} />
+              <img
+                src={
+                  room.typename === 'Standard' ? '/images/standard.jpg' :
+                    room.typename === 'Deluxe' ? '/images/deluxe.jpg' :
+                      room.typename === 'Suite' ? '/images/suite.jfif' :
+                        'Images/default.png'
+                }
+                alt={room.typename}
+              />
               <h3>{room.roomName}</h3>
               <h3>
                 Price:{" "}
                 <span style={{ textDecoration: "line-through", color: "red" }}>
-                  PKR {room.price}
+                  PKR {room.baseprice}
                 </span>{" "}
                 <span style={{ color: "green" }}>
                   PKR {room.dynamicPrice}
