@@ -107,6 +107,30 @@ const deleteRoom = async(req,res) =>{
     }
 }
 
+const getBookedRooms = async(req,res) =>{
+    try {
+        const result = await pool.query(`
+            SELECT 
+                room.id,
+                room.roomnumber,
+                room.floor,
+                roomtype.typename
+            FROM room
+            JOIN roomtype
+            ON room.roomtype_id = roomtype.id
+            JOIN reservations
+            ON reservations.room_id = room.id
+            WHERE reservations.reservationstatus = 'booked'
+        `)
+
+        res.status(200).json({status: "success", data: result.rows})
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({status: "failed", message: "failed to fetch booked rooms"})
+    }
+}
+
 module.exports = {
     createRoom,
     getRoomById,

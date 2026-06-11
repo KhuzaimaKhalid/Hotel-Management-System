@@ -8,8 +8,8 @@ const createReservation = async (req, res) => {
             return res.status(400).json({ status: "failed", message: "All fields are required" })
         }
 
-        const guestid = await pool.query('select r.guest_id,g.id from reservations r inner join guest g on r.guest_id = g.id WHERE g.id = $1', [guest_id])
-        //const guestid = await pool.query('SELECT id FROM guest WHERE id = $1', [guest_id])
+        //const guestid = await pool.query('select r.guest_id,g.id from reservations r inner join guest g on r.guest_id = g.id WHERE g.id = $1', [guest_id])
+        const guestid = await pool.query('SELECT id FROM guest WHERE id = $1', [guest_id])
 
         if (guestid.rows.length === 0) {
             return res.status(400).json({ status: "failed", message: "guest id does not exist" })
@@ -21,8 +21,8 @@ const createReservation = async (req, res) => {
             return res.status(400).json({ status: "failed", message: "room id does not exist" })
         }
 
-        const staffid = await pool.query('select r.staff_id,s.id from reservations r inner join staff s on r.staff_id = s.id WHERE s.id = $1', [staff_id])
-        //const staffid = await pool.query('SELECT id FROM staff WHERE id = $1', [staff_id])
+        //const staffid = await pool.query('select r.staff_id,s.id from reservations r inner join staff s on r.staff_id = s.id WHERE s.id = $1', [staff_id])
+        const staffid = await pool.query('SELECT id FROM staff WHERE id = $1', [staff_id])
         if (staffid.rows.length === 0) {
             return res.status(400).json({ status: "failed", message: "staff id does not exist" })
         }

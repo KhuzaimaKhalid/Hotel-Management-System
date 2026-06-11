@@ -39,7 +39,7 @@ export default function Booking() {
   const [children, setChildren] = useState(0);
 
   // Initialize states directly with our local mock data arrays
-  const [roomsData, setRoomsData] = useState(MOCK_ROOMS);
+  const [roomsData, setRoomsData] = useState([]);
   const [filteredRooms, setFilteredRooms] = useState([]);
 
   // Simulating locally saved guest profile details instead of database fetch
@@ -58,12 +58,30 @@ export default function Booking() {
 
   // Instantly apply baseline dynamic pricing on first load
   useEffect(() => {
-    const defaultRoomsWithPrices = roomsData.map((room) => ({
-      ...room,
-      dynamicPrice: calculatePrice(room.price),
-    }));
-    setFilteredRooms(defaultRoomsWithPrices);
-  }, [roomsData, roomCount, adults, children]);
+    fetch(`${import.meta.env.VITE_API_URL}/api/room/getAllRooms`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.status === 'success') {
+          const roomsWithPrice = data.data.map((room) => ({
+            ...room,
+            dynamicPrice: calculatePrice(room.baseprice),
+          }));
+          setRoomsData(roomsWithPrice);
+          setFilteredRooms(roomsWithPrice);
+        }
+      })
+      .catch(err => console.log(err));
+  }, []);
+  
+  useEffect(() => {
+    if (roomsData.length > 0) {
+      const updated = roomsData.map((room) => ({
+        ...room,
+        dynamicPrice: calculatePrice(room.baseprice),
+      }));
+      setFilteredRooms(updated);
+    }
+  }, [roomCount, adults, children]);
 
   // Clean local state array array directly instead of calling DELETE API
   const deleteRoom = (id) => {

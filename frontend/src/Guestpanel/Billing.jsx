@@ -6,7 +6,8 @@ export default function Billing() {
   const { state } = useLocation();
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const guestName = token ? JSON.parse(atob(token.split('.')[1])).userID : "Guest";
+  const guestName = localStorage.getItem('guestpanel') || "Guest";
+  const guestemail = localStorage.getItem('guestpanel') || "guest@example.com";
   // Integrated realistic fallback dummy data structure to avoid runtime null crashes
   const bookingData = state || {
     _id: "BK-" + Math.floor(100000 + Math.random() * 900000),
@@ -15,7 +16,7 @@ export default function Billing() {
     roomDescription: "A premium luxury experience featuring a king-sized master setup, an attached private balcony lounge, automated ambient climate control, and high-speed fiber connectivity.",
     dynamicPrice: 14500,
     guestName: guestName,
-    guestemail: "johndoe@example.com",
+    guestemail: guestemail,
     guestImage: null,
     checkIn: new Date().toISOString().split('T')[0],
     checkOut: new Date(Date.now() + 86400000).toISOString().split('T')[0],

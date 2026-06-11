@@ -12,6 +12,7 @@ export default function Signup() {
     address: '',      // Staff only
     hiredate: '',     // Staff only
     salary: '',       // Staff only
+    preferences: '',
     email: '',
     password: '',
     confirm_password: '',
@@ -37,7 +38,11 @@ export default function Signup() {
 
     let url = '';
     let payload = {};
-
+    if (formData.cnic.length > 15) {
+      setIsError(true);
+      setMessage('CNIC must be exactly 15 characters e.g. 42101-1234567-1');
+      return;
+    }
     // Branching logic based on selected role
     if (formData.role === 'guest') {
       url = `${import.meta.env.VITE_API_URL}/api/user/guestSignup`;
@@ -47,6 +52,8 @@ export default function Signup() {
         phone: formData.phone,
         cnic: formData.cnic,
         email: formData.email,
+        preferences: formData.preferences,
+        address: formData.address,
         password: formData.password,
         confirm_password: formData.confirm_password
       };
@@ -72,7 +79,7 @@ export default function Signup() {
     try {
       const response = await axios.post(url, payload);
       setMessage(response.data.message || 'Registration Success!');
-      
+
       // Optional: Save JWT token to local storage upon successful signup
       if (response.data.token) {
         localStorage.setItem('token', response.data.token);
@@ -87,7 +94,7 @@ export default function Signup() {
     <div className="outer">
       <div className="form">
         <h1>Welcome to Stayease</h1>
-        
+
         {/* Status Feedback Message */}
         {message && (
           <div style={{ color: isError ? '#ff4d4d' : '#2ecc71', marginBottom: '15px', fontWeight: 'bold' }}>
@@ -98,10 +105,10 @@ export default function Signup() {
         <form onSubmit={handleSubmit}>
           {/* Role selection dropdown */}
           <label htmlFor="role">Register As</label>
-          <select 
-            name="role" 
-            id="role" 
-            value={formData.role} 
+          <select
+            name="role"
+            id="role"
+            value={formData.role}
             onChange={handleChange}
             style={{ width: '100%', padding: '10px', marginBottom: '15px', borderRadius: '4px' }}
           >
@@ -124,10 +131,17 @@ export default function Signup() {
           <input type="email" name="email" id="email" placeholder="Enter your email" value={formData.email} onChange={handleChange} required />
 
           {/* Guest Specific Field */}
+
           {formData.role === 'guest' && (
             <>
               <label htmlFor="cnic">CNIC</label>
               <input type="text" name="cnic" id="cnic" placeholder="e.g. 42101-XXXXXXX-X" value={formData.cnic} onChange={handleChange} required />
+
+              <label htmlFor="preferences">Preferences</label>
+              <input type="text" name="preferences" id="preferences" placeholder="e.g. Non-smoking, High floor" value={formData.preferences} onChange={handleChange} />
+
+              <label htmlFor="address">Address</label>
+              <input type="text" name="address" id="address" placeholder="e.g. House 5 Karachi" value={formData.address} onChange={handleChange} />
             </>
           )}
 
@@ -151,11 +165,11 @@ export default function Signup() {
 
           <label htmlFor="confirm_password">Confirm Password</label>
           <input type="password" name="confirm_password" id="confirm_password" placeholder="Repeat your password" value={formData.confirm_password} onChange={handleChange} required />
-          
+
           <div className="links">
             <a href='/'>Already have an Account!</a>
           </div>
-          
+
           <input type="submit" value="Register" className="button" />
         </form>
       </div>

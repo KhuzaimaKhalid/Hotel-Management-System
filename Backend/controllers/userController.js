@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 const guestSignup = async (req, res) => {
-    const { firstname, lastname, phone, cnic, email, password, confirm_password } = req.body
+    const { firstname, lastname, phone, cnic,preferences, address, email, password, confirm_password } = req.body
     if (!firstname || !lastname || !phone || !cnic || !email || !password || !confirm_password) {
         return res.status(400).json({ status: "failed", message: "All fields are required" })
     }
@@ -31,8 +31,8 @@ const guestSignup = async (req, res) => {
 
 
         await pool.query(
-            'INSERT INTO guest (user_id, firstname, lastname, phone, cnic) VALUES ($1, $2, $3, $4, $5)',
-            [userId, firstname, lastname, phone, cnic]
+            'INSERT INTO guest (user_id, firstname, lastname, phone, cnic, preferences, address) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [userId, firstname, lastname, phone, cnic, preferences || '', address || '']
         )
 
         const token = jwt.sign({ userID: userId, role_id: 3 }, process.env.JWT_SECRET, { expiresIn: '15m' })
