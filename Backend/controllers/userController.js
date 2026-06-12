@@ -303,6 +303,19 @@ const deleteUser = async(req,res) =>{
         res.status(500).json({ status: "failed", message: "failed to delete user" })
     }
 }
+
+const getTotalUsers = async(req,res) =>{
+    try {
+        const result = await pool.query('SELECT COUNT(*) as totalusers FROM users')
+
+        res.status(200).json({ status: "success", total_users: result.rows[0].totalusers })
+
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ status: "failed", message: "failed to get total users" })
+    }
+}
+
 module.exports = {
     guestSignup,
     staffSignup,
@@ -315,5 +328,6 @@ module.exports = {
     getAllUsers,
     getUserById,
     updateUser,
-    deleteUser
+    deleteUser,
+    getTotalUsers
 }

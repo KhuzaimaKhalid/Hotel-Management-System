@@ -68,15 +68,30 @@ const getAllReservations = async (req, res) => {
 
         const result = await pool.query('SELECT * FROM reservations')
 
-        res.status(200).json({status: "success", data: result.rows})
+        res.status(200).json({ status: "success", data: result.rows })
 
     } catch (error) {
         console.log(error)
-        res.status(500).json({status: "failed", message: "failed to fetch reservations"})
+        res.status(500).json({ status: "failed", message: "failed to fetch reservations" })
     }
 }
+
+const getTotalBookings = async (req, res) => {
+    try {
+        const result = await pool.query('select count(*) as totalBookings from reservations')
+        if (!result) {
+            return res.status(400).json({ status: "failed", message: "data not fetched" })
+        }
+        res.status(200).json({ status: "success", data: result.rows[0].totalbookings })
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({ status: "failed", message: "failed to fetch total bookings" })
+    }
+}
+
 module.exports = {
     createReservation,
     getReservationById,
-    getAllReservations
+    getAllReservations,
+    getTotalBookings
 }

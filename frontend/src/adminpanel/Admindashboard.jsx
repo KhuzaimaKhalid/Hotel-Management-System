@@ -8,7 +8,9 @@ export default function Admindashboard() {
   const [roomsOpen, setroomsOpen] = useState(false);
   const [staffOpen, setStaffOpen] = useState(false);
   const [adminOpen, setAdminOpen] = useState(false);
+  const [totalBookings, setTotalBookings] = useState(0);
   const [totalRevenue, setTotalRevenue] = useState(0);
+  const [totalUsers, setTotalUsers] = useState(0);
   const navigate = useNavigate();
 
   const adminEmail = localStorage.getItem("adminEmail");
@@ -22,6 +24,24 @@ export default function Admindashboard() {
       .catch((err) => console.log(err));
   }, []);
 
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/api/user/getTotalUsers`)
+      .then((res) => res.json())
+      .then((data) => {
+        setTotalUsers(data.total_users);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  useEffect(() => {
+    fetch(`${import.meta.env.VITE_API_URL}/api/reservation/getTotalBookings`)
+      .then((res) => res.json())
+      .then((data) => {
+        setTotalBookings(data.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
   if (
     (!adminEmail && !receptionistemail) ||
     (role !== "admin" && role !== "receptionist")
@@ -29,12 +49,7 @@ export default function Admindashboard() {
     return <Navigate to="/" replace />;
   }
 
-  const [stats] = useState({
-    totalUsers: 142,
-    totalBookings: 89,
-    totalRevenue: 1200000,
-    totalFeedbacks: 34
-  });
+  
 
   const handleCardClick = (page) => { navigate(page); };
 
@@ -153,20 +168,17 @@ export default function Admindashboard() {
           <div className="grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "24px" }}>
             <div className="card" onClick={() => handleCardClick("/adminuser")} style={{ cursor: "pointer", background: "#fff", padding: "24px", borderRadius: "12px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
               <h3>Total Users</h3>
-              <div className="stat">{stats.totalUsers}</div>
+              <div className="stat">{totalUsers}</div>
             </div>
             <div className="card" onClick={() => handleCardClick("/viewrooms")} style={{ cursor: "pointer", background: "#fff", padding: "24px", borderRadius: "12px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
               <h3>Total Bookings</h3>
-              <div className="stat">{stats.totalBookings}</div>
+              <div className="stat">{totalBookings}</div>
             </div>
             <div className="card" onClick={() => handleCardClick("/bookings-revenue")} style={{ cursor: "pointer", background: "#fff", padding: "24px", borderRadius: "12px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
               <h3>Total Gross Revenue</h3>
               <div className="stat">PKR {Number(totalRevenue).toLocaleString()}</div>
             </div>
-            <div className="card" onClick={() => handleCardClick("/adminfeedbacks")} style={{ cursor: "pointer", background: "#fff", padding: "24px", borderRadius: "12px", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.05)" }}>
-              <h3>Total Feedbacks</h3>
-              <div className="stat">{stats.totalFeedbacks}</div>
-            </div>
+           
           </div>
 
           <div style={{ marginTop: "40px" }}>
