@@ -23,7 +23,7 @@ import AdminNotifications from "./adminpanel/Adminnotifications"
 import AdminServices from "./adminpanel/Adminservices"
 import Home from "./Guestpanel/Home";
 import About from "./Guestpanel/About";
-import OurRoom from "./Guestpanel/Ourroom";
+import OurRoom from "./Guestpanel/OurRoom";
 import Gallery from "./Guestpanel/Gallery";
 import Blog from "./Guestpanel/Blog";
 import ContactUs from "./Guestpanel/Contact";
