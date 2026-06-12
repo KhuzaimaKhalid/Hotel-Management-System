@@ -6,14 +6,9 @@ const createTask = async (req, res) => {
         if (!taskdate || taskstatus === undefined || !notes || maintenancestatus === undefined || !room_id || !staff_id) {
             return res.status(400).json({ status: "failed", message: "All fields are required" })
         }
-        const roomid = await pool.query('select h.room_id, r.id from housekeepingtask h inner join room r on h.room_id = r.id WHERE h.id = $1', [room_id])
-        if (!roomid.rows.length === 0) {
-            return res.status(400).json({ status: "failed", message: "room id does not exist" })
-        }
-        const staffid = await pool.query('select h.staff_id, s.id from housekeepingtask h inner join staff s on h.staff_id = s.id WHERE s.id = $1', [staff_id])
-
-        if (!staffid.rows.length === 0) {
-            return res.status(400).json({ status: "failed", message: "staff id does not exist" })
+        const validate = await pool.query('SELECT r.id, s.id FROM room r, staff s WHERE r.id = $1 AND s.id = $2', [room_id, staff_id])
+        if (validate.rows.length === 0) {
+            return res.status(400).json({ status: "failed", message: "Invalid room_id or staff_id" })
         }
         const result = await pool.query('INSERT INTO housekeepingtask (taskdate, taskstatus, notes, maintenancestatus, room_id, staff_id) VALUES ($1, $2, $3, $4, $5, $6)',  [taskdate, taskstatus, notes, maintenancestatus, room_id, staff_id]);
         if (!result) {
