@@ -21,6 +21,12 @@ import StaffServiceRequests from "./adminpanel/Staffservicerequests"
 import StaffNotifications from "./adminpanel/Staffnotifications"
 import AdminNotifications from "./adminpanel/Adminnotifications"
 import AdminServices from "./adminpanel/Adminservices"
+import Home from "./Guestpanel/Home";
+import About from "./Guestpanel/About";
+import OurRoom from "./Guestpanel/Ourroom";
+import Gallery from "./Guestpanel/Gallery";
+import Blog from "./Guestpanel/Blog";
+import ContactUs from "./Guestpanel/Contact";
 
 
 function App() {
@@ -52,6 +58,13 @@ function App() {
 
         <Route path="/adminnotifications" element={<AdminNotifications />} />
         <Route path="/adminservices" element={<AdminServices />} />
+
+        <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/our-room" element={<OurRoom />} />
+        <Route path="/gallery" element={<Gallery />} />
+        <Route path="/blog" element={<Blog />} />
+        <Route path="/contact" element={<ContactUs />} />
       </Routes>
     </>
   )
