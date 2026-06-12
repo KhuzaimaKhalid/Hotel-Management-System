@@ -13,11 +13,12 @@ const createServiceRequest = async(req,res)=>{
             return res.status(400).json({ status: "failed", message: "Invalid guest_id, service_id or reservation_id" })
         }
 
-        const result = await pool.query('INSERT INTO servicerequest(requeststatus,guest_id,service_id,reservation_id) VALUES($1,$2,$3,$4)',[requeststatus,guest_id,service_id,reservation_id])
+        await pool.query('INSERT INTO servicerequest(requeststatus,guest_id,service_id,reservation_id) VALUES($1,$2,$3,$4)',[requeststatus,guest_id,service_id,reservation_id])
 
-        if(!result){
-            return res.status(400).json({status:"failed",message:"data not fetched"})
-        }
+        const serviceResult = await pool.query('SELECT serviceprice FROM service WHERE id = $1', [service_id])
+        const servicePrice = serviceResult.rows[0].serviceprice
+
+        await pool.query('UPDATE invoice SET servicecharges = servicecharges + $1 WHERE reservation_id = $2', [servicePrice, reservation_id])
 
         res.status(200).json({status:"success",message:"created servicerequest sucessfully"})
         
