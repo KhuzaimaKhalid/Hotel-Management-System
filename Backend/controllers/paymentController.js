@@ -6,11 +6,10 @@ const createPayment = async(req,res)=>{
         if(!paymentdate || !paymentmethod || !amount|| !transactionreference || !invoice_id){
             return res.status(400).json({status:"failed",message:"All fields are required"})
         }
-
-        const invoiceid = await pool.query('select p.invoice_id,i.id from payment p inner join invoice i on p.invoice_id = i.id WHERE i.id = $1',[invoice_id])
-
-        if(invoiceid.rows.length === 0){
-            return res.status(400).json({status:"failed",message:"invoice id does not exist"})
+        const invoiceExists = await pool.query( 'SELECT id FROM invoice WHERE id = $1', [invoice_id]);
+        
+        if (invoiceExists.rows.length === 0) {
+            return res.status(400).json({ status: "failed", message: "invoice id does not exist"});
         }
 
         const result = await pool.query('INSERT INTO payment(paymentdate,paymentmethod,amount,transactionreference,invoice_id) VALUES($1,$2,$3,$4,$5)',[paymentdate,paymentmethod,amount,transactionreference,invoice_id])

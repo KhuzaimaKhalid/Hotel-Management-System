@@ -46,9 +46,31 @@ export default function Confirmation() {
                     reservation_id: resData.reservation_id
                   })
                 })
-                  .then(res => res.json())
-                  .then(data => console.log('Invoice created:', data))
-                  .catch(err => console.log(err));
+                .then(res => res.json())
+                .then(async (invoiceData) => {
+                
+                  console.log("Invoice created:", invoiceData);
+                
+                  const paymentRes = await fetch(
+                    `${import.meta.env.VITE_API_URL}/api/payment/createPayment`,
+                    {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({
+                        paymentdate: new Date().toISOString(),
+                        paymentmethod: "CASH",
+                        amount: state.dynamicPrice,
+                        transactionreference: `TXN-${Date.now()}`,
+                        invoice_id: invoiceData.invoice_id
+                      })
+                    }
+                  );
+                
+                  const paymentData = await paymentRes.json();
+                  console.log("Payment created:", paymentData);
+                
+                })
+                .catch(err => console.log(err));
               }
             })
         })

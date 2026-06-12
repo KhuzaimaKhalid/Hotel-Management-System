@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, Navigate } from "react-router-dom";
 import { useState } from "react";
-
+import axios from "axios";
 export default function Adminbillingpage() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -43,9 +43,39 @@ export default function Adminbillingpage() {
   };
 
   // Frontend-only confirmation processing handler 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
     try {
-      // Simulate real structural data response schema returned from database models
+  
+      // Create Invoice
+      const invoiceRes = await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/invoice/createInvoice`,
+        {
+          invoicedate: new Date(),
+          roomcharges: bookingData.dynamicPrice,
+          servicecharges: 0,
+          taxamount: 0,
+          paymentstatus: true,
+          reservation_id: bookingData.reservation_id
+          
+        }
+      );
+  
+      const invoice_id = invoiceRes.data.invoice_id;
+      console.log(invoiceRes.data);
+console.log(invoice_id);
+  
+      // Create Payment
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/payment/createPayment`,
+        {
+          paymentdate: new Date(),
+          paymentmethod: "CASH",
+          amount: bookingData.dynamicPrice,
+          transactionreference: `TXN-${new Date().getFullYear()}-${Date.now()}`,
+          invoice_id
+        }
+      );
+  
       const mockSavedBookingResult = {
         _id: "BK" + Math.random().toString(36).substr(2, 9).toUpperCase(),
         guestName: bookingData.guestName,
@@ -55,24 +85,18 @@ export default function Adminbillingpage() {
         adults: bookingData.adults,
         children: bookingData.children,
         roomCount: bookingData.roomCount,
-        dynamicPrice: bookingData.dynamicPrice,
-        room: {
-          roomNumber: "102-A",
-          roomType: bookingData.roomName,
-          image: bookingData.roomImage,
-          price: bookingData.dynamicPrice
-        }
+        dynamicPrice: bookingData.dynamicPrice
       };
-
-      alert(
-        `✅ Booking confirmed for Guest: ${mockSavedBookingResult.guestName} (${mockSavedBookingResult.guestEmail})`
-      );
-
-      // Route layout forward view seamlessly alongside passing simulated state context
-      navigate("/invoice", { state: { success: true, bookings: [mockSavedBookingResult] } });
+  
+      navigate("/invoice", {
+        state: {
+          success: true,
+          bookings: [mockSavedBookingResult]
+        }
+      });
+  
     } catch (err) {
-      console.error("Error confirming mock booking data schema:", err);
-      alert("⚠ Something went wrong during local generation!");
+      console.log(err);
     }
   };
 

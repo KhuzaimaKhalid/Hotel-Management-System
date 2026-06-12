@@ -7,11 +7,15 @@ const createInvoice = async (req, res) => {
             return res.status(400).json({ status: "failed", message: "All fields are required" })
         }
         
-        const result = await pool.query('INSERT INTO invoice (invoicedate, roomcharges, servicecharges, taxamount, paymentstatus, reservation_id) VALUES ($1, $2, $3, $4, $5, $6)',  [invoicedate, roomcharges, servicecharges, taxamount, paymentstatus, reservation_id]);
+        const result = await pool.query(`INSERT INTO invoice
+  (invoicedate, roomcharges, servicecharges, taxamount, paymentstatus, reservation_id)
+  VALUES ($1,$2,$3,$4,$5,$6)
+  RETURNING id`,
+  [invoicedate, roomcharges, servicecharges, taxamount, paymentstatus, reservation_id]);
         if (!result) {
             return res.status(400).json({ status: "failed", message: "data not fetched" })
         }
-        res.status(200).json({ status: "success", message: "created invoice sucessfully" })
+        res.status(200).json({ status: "success", message: "created invoice sucessfully", invoice_id: result.rows[0].id })
     } catch (error) {
         console.log(error)
         res.status(500).json({ status: "failed", message: "create invoice failed" })
